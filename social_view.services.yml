@@ -1,0 +1,4 @@
+services:
+  plugin.manager.social_network_view:
+    class: Drupal\social_view\Plugin\SocialNetworkViewManager
+    parent: default_plugin_manager

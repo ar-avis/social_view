@@ -1,0 +1,20 @@
+{
+  "name": "drupal/social_view",
+  "type": "drupal-module",
+  "description": "Add integration with social networks posts.",
+  "keywords": ["Drupal"],
+  "license": "GPL-2.0+",
+  "homepage": "https://www.drupal.org/project/social_view",
+  "minimum-stability": "dev",
+  "support": {
+    "issues": "https://www.drupal.org/project/issues/social_view",
+    "source": "http://cgit.drupalcode.org/social_view"
+  },
+  "require": {
+    "cosenary/instagram": "^2.3",
+    "facebook/graph-sdk" : "^5.6",
+    "linkedinapi/linkedin": "^1.1",
+    "j7mbo/twitter-api-php" : "^1.0",
+    "incremental/php-youtube" : "^1.0"
+  }
+}

@@ -1,0 +1,104 @@
+<?php
+
+/**
+ * @file
+ * Contains social_view.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\social_view\Plugin\SocialNetworkViewManager;
+use Drupal\views\ViewExecutable;
+
+/**
+ * Implements hook_help().
+ */
+function social_view_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the social_view module.
+    case 'help.page.social_view':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Add integration with social networks posts.') . '</p>';
+      return $output;
+
+    default:
+  }
+  return '';
+}
+
+/**
+ * Implements hook_cron().
+ */
+function social_view_cron() {
+  $interval = \Drupal::config('social_view.settings')->get('interval');
+  $last_parsing = \Drupal::state()->get('social_view_timestamp');
+  $now = \Drupal::time()->getRequestTime();
+
+  if (($last_parsing + $interval) < $now) {
+    foreach (SocialNetworkViewManager::getList() as $network) {
+      $network = SocialNetworkViewManager::load($network['id']);
+      if ($network->isEnable()) {
+        $network->parseRecords();
+      }
+    }
+    \Drupal::service('cache_tags.invalidator')
+      ->invalidateTags(['config:views.view.social_view']);
+    \Drupal::state()->set('social_view_timestamp', $now);
+  }
+}
+
+/**
+ * Implements THEMENAME_preprocess_views_view().
+ */
+function social_view_preprocess_views_view(array &$variables) {
+  // Add title for page views.
+  if ($variables['view']->id() == 'social_view') {
+    $variables['title'] = $variables['view']->getTitle();
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function social_view_theme() {
+  return [
+    'social_links' => [
+      'variables' => [
+        'links' => [],
+      ],
+    ],
+  ];
+}
+
+/**
+ * Let's show by default only 1 item per network.
+ */
+function social_view_views_post_execute(ViewExecutable $view) {
+  if ($view->id() == 'social_view') {
+    $result = &$view->result;
+
+    if (!empty($result)) {
+      $networks = [];
+      foreach ($result as $i => $row) {
+        if (!isset($networks[$row->social_parsed_data_type])) {
+          $networks[$row->social_parsed_data_type] = $i;
+        }
+      }
+
+      if (count($networks) > 1) {
+        if (!empty($networks['linkedin']) && count($networks) > 3) {
+          unset($networks['linkedin']);
+        }
+
+        foreach ($result as $i => $row) {
+          if (!in_array($i, $networks)) {
+            unset($result[$i]);
+          }
+        }
+      }
+      else {
+        $result = array_slice($result, 0, 3);
+      }
+    }
+  }
+}

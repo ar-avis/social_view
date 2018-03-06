@@ -1,0 +1,7 @@
+social_view.settings:
+  path: '/admin/config/content/social_view/settings'
+  defaults:
+    _form: '\Drupal\social_view\Form\SettingsForm'
+    _title: 'Social networks view settings'
+  requirements:
+    _permission: 'administer site configuration'
