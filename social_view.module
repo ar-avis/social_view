@@ -8,6 +8,7 @@
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\social_view\Plugin\SocialNetworkViewManager;
 use Drupal\views\ViewExecutable;
+use Drupal\Core\Form\FormStateInterface;
 
 /**
  * Implements hook_help().
@@ -100,5 +101,17 @@ function social_view_views_post_execute(ViewExecutable $view) {
         $result = array_slice($result, 0, 3);
       }
     }
+  }
+}
+
+/**
+ * Implements hook_field_widget_form_alter().
+ */
+function social_view_field_widget_form_alter(&$element, FormStateInterface $form_state, $context) {
+  if (!empty($context['items']) && $context['items']->getName() == 'field_social_feed_type') {
+    $element['value']['#type'] = 'select';
+    $element['value']['#size'] = 1;
+    $element['value']['#options'] = SocialNetworkViewManager::getSelectList();
+    $element['value']['#empty_option'] = t('- None -');
   }
 }
