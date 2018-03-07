@@ -72,7 +72,7 @@ class Twitter extends SocialNetworkViewBase {
               'date' => strtotime($record['created_at']),
               'url' => $page_info['url'] . '/status/' . $record['id'],
               'image' => $image,
-              'title' => !empty($this->settings['title']) ? t($this->settings['title']) : $page_info['name'] . '#' . $record['id'],
+              'title' => !empty($this->settings['title']) ? t($this->settings['title']) : $page_info['name'] . ' #' . $record['id'],
               'body' => $record['text'],
             ]
           ];

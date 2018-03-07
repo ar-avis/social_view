@@ -52,7 +52,7 @@ class Youtube extends SocialNetworkViewBase {
               'date' => strtotime($record['snippet']['publishedAt']),
               'url' => 'https://youtu.be/' . $record['snippet']['resourceId']['videoId'],
               'image' => $record['snippet']['thumbnails']['standard']['url'],
-              'title' => !empty($this->settings['title']) ? t($this->settings['title']) : $record['snippet']['title'] . '#' . $record['snippet']['resourceId']['videoId'],
+              'title' => !empty($this->settings['title']) ? t($this->settings['title']) : $record['snippet']['title'] . ' #' . $record['snippet']['resourceId']['videoId'],
               'body' => htmlspecialchars_decode($record['snippet']['description'], ENT_QUOTES),
             ],
           ];

@@ -28,7 +28,7 @@ class SocialStorage {
     $nodes = Node::loadMultiple($nodes);
     if (!empty($nodes)) {
       foreach ($nodes as $node) {
-        $url = $node->get('field_social_feed_url')->value;
+        $url = $node->get('field_social_feed_url')->uri;
         $exists[] = $url;
       }
     }

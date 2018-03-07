@@ -75,7 +75,7 @@ class Facebook extends SocialNetworkViewBase {
               'date' => strtotime($record->created_time),
               'url' => $record->permalink_url,
               'image' =>  $image,
-              'title' => !empty($this->settings['title']) ? t($this->settings['title']) : $page_info['name'] . '#' . $record->id,
+              'title' => !empty($this->settings['title']) ? t($this->settings['title']) : $page_info['name'] . ' #' . $record->id,
               'body' => $record->message,
             ]
           ];
