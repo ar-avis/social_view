@@ -1,0 +1,35 @@
+status: false
+dependencies:
+  config:
+    - core.entity_view_mode.node.teaser
+    - field.field.node.social_feed.body
+    - field.field.node.social_feed.field_social_feed_id
+    - field.field.node.social_feed.field_social_feed_image_url
+    - field.field.node.social_feed.field_social_feed_type
+    - field.field.node.social_feed.field_social_feed_url
+    - node.type.social_feed
+  module:
+    - text
+    - user
+id: node.social_feed.teaser
+targetEntityType: node
+bundle: social_feed
+mode: teaser
+content:
+  body:
+    label: hidden
+    type: text_summary_or_trimmed
+    weight: 101
+    settings:
+      trim_length: 600
+    third_party_settings: {  }
+    region: content
+  links:
+    weight: 100
+    region: content
+hidden:
+  field_social_feed_id: true
+  field_social_feed_image_url: true
+  field_social_feed_type: true
+  field_social_feed_url: true
+  langcode: true

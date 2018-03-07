@@ -1,0 +1,10 @@
+status: true
+dependencies: {}
+third_party_settings: {}
+name: 'Social feed'
+type: social_feed
+description: ''
+help: ''
+new_revision: false
+preview_mode: 0
+display_submitted: true

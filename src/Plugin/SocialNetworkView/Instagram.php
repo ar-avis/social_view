@@ -45,19 +45,22 @@ class Instagram extends SocialNetworkViewBase {
           $record->caption->text
         );
 
-
         $result[] = [
-          'type' => $this->getPluginId(),
-          'date' => $record->created_time,
-          'name' => $record->user->full_name,
-          'url' => 'https://www.instagram.com/' . $record->user->username,
-          'logo' => $record->user->profile_picture,
-          'image' =>  $record->images->standard_resolution->url,
-          'title' => !empty($this->settings['title']) ? t($this->settings['title']) : $record->user->username,
-          'body' => $record->caption->text,
+          'page_info' => [
+            'id' => $record->user->id,
+            'name' => $record->user->full_name,
+            'logo' => $record->user->profile_picture,
+          ],
+          'post_info' => [
+            'date' => $record->created_time,
+            'url' => $record->link,
+            'image' =>  $record->images->standard_resolution->url,
+            'title' => !empty($this->settings['title']) ? t($this->settings['title']) : $record->user->full_name,
+            'body' => $record->caption->text,
+          ]
         ];
       }
-      SocialStorage::save($result);
+      SocialStorage::save($this->getPluginId(), $result);
     }
     catch (\Exception $e) {
       \Drupal::logger('social_view')->warning($this->getPluginId() . ': ' . $e->getMessage());

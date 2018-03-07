@@ -1,0 +1,9 @@
+status: true
+dependencies:
+  config:
+    - node.type.social_feed
+id: node.social_feed
+target_entity_type_id: node
+target_bundle: social_feed
+default_langcode: site_default
+language_alterable: false

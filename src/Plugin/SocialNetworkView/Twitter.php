@@ -67,14 +67,14 @@ class Twitter extends SocialNetworkViewBase {
           }
 
           $result[] = [
-            'type' => $this->getPluginId(),
-            'date' => strtotime($record['created_at']),
-            'name' => $page_info['name'],
-            'url' => $page_info['url'],
-            'logo' => $page_info['logo'],
-            'image' => $image,
-            'title' => !empty($this->settings['title']) ? t($this->settings['title']) : '',
-            'body' => $record['text'],
+            'page_info' => $page_info,
+            'post_info' => [
+              'date' => strtotime($record['created_at']),
+              'url' => $page_info['url'] . '/status/' . $record['id'],
+              'image' => $image,
+              'title' => !empty($this->settings['title']) ? t($this->settings['title']) : $page_info['name'] . '#' . $record['id'],
+              'body' => $record['text'],
+            ]
           ];
         }
 
@@ -82,7 +82,7 @@ class Twitter extends SocialNetworkViewBase {
           break;
         }
       }
-      SocialStorage::save($result);
+      SocialStorage::save($this->getPluginId(), $result);
     }
     catch (\Exception $e) {
       \Drupal::logger('social_view')->warning($this->getPluginId() . ' - Error: ' . $e->getMessage());

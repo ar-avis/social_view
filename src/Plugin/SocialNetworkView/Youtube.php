@@ -46,19 +46,18 @@ class Youtube extends SocialNetworkViewBase {
 
         $result = [];
         foreach ($videos['items'] as $key => $record) {
-          /*$video_id = $record['snippet']['resourceId']['videoId'];*/
           $result[] = [
-            'type' => $this->getPluginId(),
-            'date' => strtotime($record['snippet']['publishedAt']),
-            'name' => $page_info['name'],
-            'url' => $page_info['url'],
-            'logo' => $page_info['logo'],
-            'image' => $record['snippet']['thumbnails']['standard']['url'],
-            'title' => !empty($this->settings['title']) ? t($this->settings['title']) : $record['snippet']['title'],
-            'body' => htmlspecialchars_decode($record['snippet']['description'], ENT_QUOTES),
+            'page_info' => $page_info,
+            'post_info' => [
+              'date' => strtotime($record['snippet']['publishedAt']),
+              'url' => 'https://youtu.be/' . $record['snippet']['resourceId']['videoId'],
+              'image' => $record['snippet']['thumbnails']['standard']['url'],
+              'title' => !empty($this->settings['title']) ? t($this->settings['title']) : $record['snippet']['title'] . '#' . $record['snippet']['resourceId']['videoId'],
+              'body' => htmlspecialchars_decode($record['snippet']['description'], ENT_QUOTES),
+            ],
           ];
         }
-        SocialStorage::save($result);
+        SocialStorage::save($this->getPluginId(), $result);
       }
     }
     catch (\Exception $e) {

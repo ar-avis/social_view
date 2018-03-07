@@ -4,3 +4,10 @@ description: Add integration with social networks posts.
 core: 8.x
 package: Social networks
 configure: social_view.settings
+dependencies:
+  - link
+  - text
+  - path
+  - node
+  - user
+  - imagecache_external

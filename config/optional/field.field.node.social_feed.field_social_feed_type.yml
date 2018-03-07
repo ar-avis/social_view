@@ -1,0 +1,17 @@
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_social_feed_type
+    - node.type.social_feed
+id: node.social_feed.field_social_feed_type
+field_name: field_social_feed_type
+entity_type: node
+bundle: social_feed
+label: Type
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

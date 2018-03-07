@@ -1,0 +1,66 @@
+status: true
+dependencies:
+  config:
+    - field.field.node.social_feed.body
+    - field.field.node.social_feed.field_social_feed_id
+    - field.field.node.social_feed.field_social_feed_image_url
+    - field.field.node.social_feed.field_social_feed_type
+    - field.field.node.social_feed.field_social_feed_url
+    - node.type.social_feed
+  module:
+    - imagecache_external
+    - link
+    - text
+    - user
+id: node.social_feed.default
+targetEntityType: node
+bundle: social_feed
+mode: default
+content:
+  body:
+    label: hidden
+    type: text_default
+    weight: 1
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  field_social_feed_image_url:
+    weight: 0
+    label: hidden
+    settings:
+      imagecache_external_style: ''
+      imagecache_external_link: ''
+    third_party_settings:
+      ds:
+        ft:
+          id: default
+          settings:
+            lb: ''
+            lb-col: false
+            classes: {  }
+    type: imagecache_external_image
+    region: content
+  field_social_feed_type:
+    weight: 2
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+    region: content
+  field_social_feed_url:
+    weight: 0
+    label: above
+    settings:
+      trim_length: 80
+      url_only: false
+      url_plain: false
+      rel: ''
+      target: ''
+    third_party_settings: {  }
+    type: link
+    region: content
+hidden:
+  field_social_feed_id: true
+  langcode: true
+  links: true

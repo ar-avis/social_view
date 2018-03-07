@@ -54,23 +54,21 @@ class Linkedin extends SocialNetworkViewBase {
 
         $records = $li->get('/companies/' . $this->settings['company_id'] . '/updates');
         $result = [];
-        $count = 0;
         foreach ($records['values'] as $record) {
-          if ($count >= 3) {
+          $result[] = [
+            'page_info' => $page_info,
+            'post_info' => [
+              'date' => ($record['updateContent']['companyStatusUpdate']['share']['timestamp'] / 1000),
+              'url' => $page_info['url'],
+              'title' => !empty($this->settings['title']) ? t($this->settings['title']) : $page_info['name'],
+              'body' => htmlspecialchars_decode($record['updateContent']['companyStatusUpdate']['share']['comment'], ENT_QUOTES),
+            ]
+          ];
+          if (count($result) >= $count) {
             break;
           }
-          $result[] = [
-            'type' => $this->getPluginId(),
-            'date' => ($record['updateContent']['companyStatusUpdate']['share']['timestamp'] / 1000),
-            'name' => $page_info['name'],
-            'url' => $page_info['url'],
-            'logo' => $page_info['logo'],
-            'title' => !empty($this->settings['title']) ? t($this->settings['title']) : '',
-            'body' => htmlspecialchars_decode($record['updateContent']['companyStatusUpdate']['share']['comment'], ENT_QUOTES),
-          ];
-          $count++;
         }
-        SocialStorage::save($result);
+        SocialStorage::save($this->getPluginId(), $result);
       }
     }
     catch (\Exception $e) {

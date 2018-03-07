@@ -1,6 +1,7 @@
 <?php
 
 namespace Drupal\social_view;
+use Drupal\node\Entity\Node;
 
 /**
  * Storage implementation for Social View.
@@ -8,40 +9,46 @@ namespace Drupal\social_view;
 class SocialStorage {
 
   /**
-   * Delete records.
+   * Save records.
    *
    * @param string $type
-   *   Plugin type.
-   */
-  public static function clear($type = NULL) {
-    if (empty($type)) {
-      \Drupal::database()->delete('social_parsed_data')->execute();
-    }
-    else {
-      \Drupal::database()->delete('social_parsed_data')->condition('type', $type)->execute();
-    }
-  }
-
-  /**
-   * Save records.
+   *   Recod type.
    *
    * @param array $data
    *   Record data.
    */
-  public static function save(array $data) {
-    $transaction = \Drupal::database()->startTransaction();
-    try {
-      SocialStorage::clear($data[0]['type']);
-      foreach ($data as $key => $item) {
-        if (!empty($item['body']) && mb_strlen($item['body']) > 1024) {
-          $item['body'] = mb_strimwidth($item['body'], 0, 1020, "...");
-        }
-        \Drupal::database()->insert('social_parsed_data')->fields($item)->execute();
+  public static function save($type, array $data) {
+    $exists = [];
+    $nodes = \Drupal::entityQuery('node')
+      ->condition('type', 'social_feed')
+      ->condition('field_social_feed_type', $type)
+      ->exists('field_social_feed_url')
+      ->execute();
+
+    $nodes = Node::loadMultiple($nodes);
+    if (!empty($nodes)) {
+      foreach ($nodes as $node) {
+        $url = $node->get('field_social_feed_url')->value;
+        $exists[] = $url;
       }
     }
-    catch (\Exception $e) {
-      $transaction->rollBack();
-      \Drupal::logger('social_view')->error('Storage problem:' . $e->getMessage());
+
+    foreach ($data as $item) {
+      if (!in_array($item['post_info']['url'], $exists)) {
+        $node = Node::create([
+          'type' => 'social_feed',
+          'title' => $item['post_info']['title'],
+          'body' => [
+            'value' => $item['post_info']['body'],
+            'format' => 'full_html',
+          ],
+          'created' => $item['post_info']['date'],
+          'field_social_feed_url' => $item['post_info']['url'],
+          'field_social_feed_type' => $type,
+          'field_social_feed_image_url' => $item['post_info']['image'],
+        ]);
+        $node->save();
+      }
     }
   }
 

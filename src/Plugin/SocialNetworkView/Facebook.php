@@ -47,7 +47,7 @@ class Facebook extends SocialNetworkViewBase {
 
       // Get the \Facebook\GraphNodes\GraphUser object for the current user.
       $response = $this->fb->get(
-        '/' . $page_id . '/feed?fields=id,message,attachments,from,created_time'
+        '/' . $page_id . '/feed?fields=id,permalink_url,message,attachments,from,created_time'
       );
 
       $response = json_decode($response->getBody());
@@ -70,21 +70,21 @@ class Facebook extends SocialNetworkViewBase {
             $image = $record->attachments->data[0]->subattachments->data[0]->media->image->src;
           }
           $result[] = [
-            'type' => $this->getPluginId(),
-            'date' => strtotime($record->created_time),
-            'name' => $page_info['name'],
-            'url' => $page_info['url'],
-            'logo' => $page_info['logo'],
-            'image' =>  $image,
-            'title' => !empty($this->settings['title']) ? t($this->settings['title']) : $record->from->name,
-            'body' => $record->message,
+            'page_info' => $page_info,
+            'post_info' => [
+              'date' => strtotime($record->created_time),
+              'url' => $record->permalink_url,
+              'image' =>  $image,
+              'title' => !empty($this->settings['title']) ? t($this->settings['title']) : $page_info['name'] . '#' . $record->id,
+              'body' => $record->message,
+            ]
           ];
           if (count($result) >= $count) {
             break;
           }
         }
       }
-      SocialStorage::save($result);
+      SocialStorage::save($this->getPluginId(), $result);
     }
     catch (FacebookResponseException $e) {
       \Drupal::logger('social_view')->warning($this->getPluginId() . ' - Graph returned an error: ' . $e->getMessage());
@@ -119,7 +119,7 @@ class Facebook extends SocialNetworkViewBase {
     ];
 
     $form['page_id'] = [
-      '#title' => t('page_id'),
+      '#title' => t('Page id'),
       '#type' => 'textfield',
       '#default_value' => !empty($config['page_id']) ? $config['page_id'] : '',
     ];
